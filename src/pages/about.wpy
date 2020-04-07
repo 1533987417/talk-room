@@ -1,0 +1,53 @@
+<style lang="less">
+.about {
+  margin-top: 100px;
+  text-align: center;
+}
+</style>
+
+<template>
+  <view class="about">
+    <input class=""></input>
+    <view @tap="sendMessage" class="">发送</view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class About extends wepy.page {
+  config = {
+    navigationBarTitleText: '关于',
+    enablePullDownRefresh: false
+  }
+
+  data = {
+    title: '万达会议室预订',
+    version: '0.9.1'
+  }
+  onLoad(){
+    console.log('初始化');
+    var param={};
+    param.url="ws://172.20.10.2:8081/websocket/openId"
+    console.log(param);
+    var res= wepy.connectSocket(param);
+    wepy.onSocketMessage(this.getMessage)
+  }
+  methods={
+    getMessage(parm){
+      console.log(parm)
+    }
+  }
+  //获取服务器的推送信息
+  getMessage(parm){
+    console.log(parm)
+  }
+  //向服务器推信息
+  sendMessage(){
+    var param={};
+    param.data="ws://172.20.10.2:8081/websocket/openId";
+    wepy.sendSocketMessage(param);
+  }
+
+}
+</script>

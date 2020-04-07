@@ -1,0 +1,159 @@
+<style lang="less">
+page{
+ /* backgroun */
+}
+.page-redirect{
+  width: 100%;
+  height: 1000rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.pop_btn{
+  font-size: 32rpx;
+  line-height: 100rpx;
+  text-align: center;
+  width: 200rpx;
+  color: white;
+  background-color: burlywood;
+  height: 100rpx;
+}
+.btn1 {
+  width: 80%;
+  margin-top: 20rpx;
+  background-color: burlywood;
+  color: white;
+  border-radius: 98rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  bottom:-200rpx;
+}
+
+.btnImg {
+  margin-right: 8rpx;
+  width: 46rpx;
+  height: 46rpx;
+}
+
+.btn1::after {
+  border-radius: 98rpx;
+  border: 0; 
+}
+.charge-detail {
+  text-align:center;
+  margin-top:-180rpx;
+  color:#707070;
+  font-size:70%;
+  font-weight: soild
+
+}
+.text{
+  color: #0000CD
+}
+.title {
+  margin: 10px 0 0;
+  font-size: 20px;
+  text-align: center;
+}
+
+.header {
+  text-align: center;
+  margin: 10px;
+}
+.flex-wrp {
+  min-height: 42px;
+  font-size:12px;
+  display:flex;
+  background-color: #FFFFFF;
+  border-bottom: 2px solid #f7f8fa;
+
+  .flex-item {
+    flex: 1;
+    min-height: 32px;
+    text-align: right;
+    margin: 5px 5px;
+    line-height: 32px;
+    vertical-align: middle;
+    color: #333;
+    font-size: 14px;
+  }
+
+  .flex-detail {
+    flex: 3;
+    height: 32px;
+    margin: 5px;
+    line-height: 32px;
+    vertical-align: middle;
+    input {
+      height: 32px;
+      font-size: 14px;
+      color: #333;
+    }
+  }
+}
+
+.btn {
+  width: 100%;
+  height: 40px;
+  font-size: 16px;
+  border-radius: 2px;
+}
+.btn-container {
+  padding: 20px 10rpx 0;
+  background: transparent;
+}
+</style>
+
+<template>
+  <view class="page-redirect">
+
+    <button class='btn1' 
+    open-type='getUserInfo'
+    bindgetuserinfo="getUserInfo">
+    <image class='btnImg' src='/static/images/wechat.png'/>
+    <view>微信登录</view>
+
+  </button>
+  
+</view>
+
+<popup></popup>
+</template>
+
+<script>
+import wepy from 'wepy'
+import storage from '../utils/storage'
+import api from '../api'
+import Popup from '../components/popup'
+
+export default class Index extends wepy.page {
+  config = {
+    navigationBarTitleText: '绑定万信号',
+    enablePullDownRefresh: false
+  }
+  components = {
+    popup: Popup
+  }
+
+  data = {
+    wanxin: '',
+    password: ''
+  }
+
+  methods = {
+    async getUserInfo(){
+      const user = await this.$parent.checkLogin();
+      console.log("usersss"+user)
+      wepy.switchTab({
+        url: 'home'
+      })
+    }
+  }
+
+  toastShow(message) {
+    this.$invoke('popup', 'show', message)
+  }
+}
+</script>

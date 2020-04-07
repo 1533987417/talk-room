@@ -1,0 +1,106 @@
+<style lang="less">
+.content {
+  background: #fff;
+  padding: 8px;
+  font-size: 14px;
+}
+.title {
+  font-size: 16px;
+  line-height: 30px;
+  height: 30px;
+}
+.btn-container {
+  margin: 20px 10rpx 0;
+}
+textarea {
+  border: 1px solid #ccc;
+  padding: 5px;
+  width: auto;
+  display: block;
+}
+.btn {
+  width: 100%;
+  height: 40px;
+  line-height:40px;
+  font-size: 16px;
+  border-radius: 2px;
+}
+</style>
+<template>
+  <view class="container">
+    <form bindsubmit="formSubmit">
+      <view class="content">
+        <view class="title">反馈内容（200 字以内）</view>
+        <textarea placeholder="请输入反馈内容" name="content" auto-focus placeholder-style="color:#ccc;" />
+      </view>
+      <view class="btn-container"><button class="btn" formType="submit" type="primary">提交</button></view>
+    </form>
+  </view>
+  <popup></popup>
+</template>
+
+<script>
+import wepy from 'wepy'
+import api from '../api'
+import Popup from '../components/popup'
+
+export default class Feedback extends wepy.page {
+  config = {
+    navigationBarTitleText: '反馈',
+    enablePullDownRefresh: false
+  }
+  components = {
+    popup: Popup
+  }
+  data = {}
+  onLoad(){
+    console.log('初始化');
+    var param={};
+    param.url="ws://121.40.140.66:6379/websocket/o0Pgv5UqK9GQWfvGGVAJMnDu0GhQ1"
+    console.log(param);
+    var res= wepy.connectSocket(param);
+    wepy.onSocketMessage(this.getMessage)
+  }
+  methods = {
+    formSubmit(e) {
+      const that = this
+      if (e.detail.value.content.length < 1) {
+        this.toastShow('请输入反馈信息！')
+      } else {
+        that.submitFeedback(e.detail.value.content)
+      }
+    }
+  }
+
+
+  //获取服务器的推送信息
+  getMessage(parm){
+    console.log(parm.data)
+  }
+  //向服务器推信息
+  async submitFeedback(obj) {
+    var param={};
+    param.data=obj;
+    let feedback=await wepy.sendSocketMessage(param)
+    console.log(feedback.errMsg)
+    if (feedback.errMsg=== 'sendSocketMessage:ok') {
+      wx.showToast({
+        title: '成功',
+        icon: 'success',
+        duration: 1000
+      })
+    } else {
+      wx.showModal({
+        title: '错误',
+        content: feedback.message,
+        showCancel: false,
+        success: function(res) {
+        }
+      })
+    }
+  }
+  toastShow(message) {
+    this.$invoke('popup', 'show', message)
+  }
+}
+</script>

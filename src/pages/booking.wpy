@@ -1,0 +1,465 @@
+<style lang="less">
+page {
+  background: #f2f2f2;
+}
+.meeting-room {}
+
+.top {
+  box-sizing: border-box;
+  height: 60px;
+  background: #fff;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+  padding: 10px;
+  .date {
+    height: 20px;
+  }
+
+  .location {
+    height: 20px;
+  }
+}
+
+.selected-time {
+  margin: 10px 4px;
+}
+
+.bottom {
+  box-sizing: border-box;
+  position: fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index: 10;
+  font-size: 16px;
+  text-align: center;
+  padding: 6px 6px;
+  background: #fff;
+
+  .booking-btn {
+    box-sizing: border-box;
+    height: 40px;
+    background: #1AAD16;
+    color: #fff;
+    padding: 20rpx 0;
+    border-radius: 2px;
+  }
+
+  .booking-info {
+    font-size: 14px;
+    margin-bottom: 6px;
+
+    .selected-time {
+      display: flex;
+      justify-content: center;
+      width: 100rpx;
+
+      .bookings-item {
+        font-size: 12px;
+        width: 80px;
+      }
+    }
+    .prompt {
+      display: flex;
+      justify-content: center;
+      .prompt-block {
+        display: flex;
+        align-items: center;
+        flex-flow: column;
+        width: 80px;
+        height: 40px;
+        .prompt-block-color {
+          margin-bottom: 4px;
+          width: 30px;
+          height: 20px;
+        }
+      }
+    }
+  }
+}
+
+.booking-preview {
+  display: flex;
+  position: fixed;
+  z-index: 500;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+
+  background: rgba(40, 40, 40, 0.75);
+  justify-content: center;
+  align-items: center;
+
+  .booking {
+    height: 300px;
+    width: 250px;
+    background: #fff;
+    font-size: 16px;
+
+    .close {
+      text-align: right;
+      padding: 6px 8px;
+      border-bottom: 1px solid #ddd;
+      font-size: 16px;
+      height: 20px;
+      line-height: 20px;
+    }
+
+    .booking-info {
+      padding: 0 8px;
+    }
+
+    .booking-info-item {
+      display: flex;
+      align-content: center;
+      border-bottom: 1px solid #ddd;
+      padding: 8px 0;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .left {
+        flex: 1;
+        text-align: right;
+      }
+      .right {
+        flex: 2;
+        padding-left: 8px;
+
+        text {
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+.can-booking {
+  background: #fff;
+  border: 1px solid #ddd;
+}
+
+.disable {
+  background: #ddd;
+}
+.used {
+  background: #ea1544;
+}
+
+.my-selected {
+  background: #53c18e;
+}
+
+</style>
+<template>
+  <view class="container">
+    <view class="top">
+      <view class="date">日期：{{date}}</view>
+      <view class="location">楼号：{{locationName}}</view>
+    </view>
+    <view class="meeting-room">
+      <bookingTable
+      :meetingRooms.sync="meetingRooms"
+      :maxHeight.sync="maxHeight"
+      :selectedDate.sync="date"
+      :currentUser.sync="currentUser"
+      @times-selected.user="selectTime"
+      @time-click.user="clickTime"
+      ></bookingTable>
+    </view>
+
+    <view class="bottom">
+      <view class="booking-info">
+        <view wx:if="{{false}}" class="selected-time">
+          <!-- 这个后面再做 -->
+          <view wx:for="{{bookings}}" class="bookings-item">
+          </view>
+        </view>
+        <view wx:else class="prompt">
+          <view class="prompt-block">
+            <view class="prompt-block-color can-booking"></view>
+            <view class="">可预订</view>
+          </view>
+          <view class="prompt-block">
+            <view class="prompt-block-color used"></view>
+            <view class="">已被预订</view>
+          </view>
+          <view class="prompt-block">
+            <view class="prompt-block-color my-selected"></view>
+            <view class="">当前选中</view>
+          </view>
+          <view class="prompt-block">
+            <view class="prompt-block-color disable"></view>
+            <view class="">不可预订</view>
+          </view>
+        </view>
+      </view>
+      <view class="booking-btn" @tap="booking">确认选择</view>
+    </view>
+
+    <!-- 预订预览浮层 -->
+    <view class="booking-preview {{previewHidden ? 'hidden' : ''}}" @tap="closePreview">
+      <view class="booking" @tap.stop="stopBubble">
+        <view class="close" @tap="closePreview">X</view>
+        <view class="booking-info">
+          <view class="booking-info-item">
+            <view class="left">会议主题</view>
+            <view class="right">{{booking.subject}}</view>
+          </view>
+          <view class="booking-info-item">
+            <view class="left">开始时间</view>
+            <view class="right">{{booking.start_time}}</view>
+          </view>
+          <view class="booking-info-item">
+            <view class="left">结束时间</view>
+            <view class="right">{{booking.end_time}}</view>
+          </view>
+
+          <view wx:if="{{userLoading}}" class="booking-info-item">用户信息加载中...</view>
+          <view wx:else>
+            <view class="booking-info-item">
+              <view class="left">姓名</view>
+              <view class="right">{{user.name}}</view>
+            </view>
+            <view class="booking-info-item">
+              <view class="left">万信号</view>
+              <view class="right">{{user.wanxin}}</view>
+            </view>
+            <view class="booking-info-item">
+              <view class="left">手机号</view>
+              <view class="right" @tap='callPhone(user.mobile)'>
+                <text>{{user.mobile}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <!-- 预订预览浮层 -->
+  </view>
+  <popup></popup>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Toast from 'wepy-com-toast'
+import log from '../utils/log'
+import api from '../api'
+import BookingTable from '../components/bookingTable'
+import Popup from '../components/popup'
+
+export default class Booking extends wepy.page {
+  config = {
+    navigationBarTitleText: '会议室预订',
+    navigationBarBackgroundColor: '#f7f8fa',
+    enablePullDownRefresh: false
+  }
+  components = {
+    toast: Toast,
+    bookingTable: BookingTable,
+    popup: Popup
+  }
+
+  data = {
+date: '',           // 查询的日期
+locationName: '云从大楼',   // 楼栋名字
+bookings: [],       // 选中的的时间段
+meetingRoom: {},    // 选中的会议室
+meetingRooms: [],   // 查询到的会议室列表
+params: {},         // 上个页面传来的参数
+maxHeight: '400px', // scroll-view 高度
+booking: {},        // 查看的某一条预订数据
+user: {},           // 查看预订人
+userLoading: true,
+previewHidden: true,
+currentUser: {}     // 当前登录的用户
+}
+
+methods = {
+  selectTime(meetingRoom, bookings) {
+    console.log("meetingRoom"+meetingRoom)
+    console.log("bookings"+bookings)
+    this.meetingRoom = meetingRoom
+    this.bookings = bookings
+    this.$apply()
+  },
+
+  async clickTime(time, meetingRoom) {
+    if (time && time.booking_id) {
+      this.previewHidden = false
+// let booking = null
+meetingRoom.bookings.forEach(item => {
+  if (item.id === time.booking_id) {
+    this.booking = item
+  }
+})
+this.$apply()
+
+if (this.booking.encrypted_user_id) {
+// 这个地方采用加密后的 user_id 来查
+const res = await api.getUserInfo({id: this.booking.encrypted_user_id})
+this.userLoading = false
+if (res.code !== '200') {
+  this.toastShow('获取预订信息失败，请重试')
+  return
+}
+this.user = res.data
+}
+
+this.$apply()
+}
+},
+
+// 打电话
+async callPhone(phone) {
+  console.log(phone)
+
+  try {
+    await wepy.makePhoneCall({phoneNumber: phone})
+    this.toastShow('拨打 ' + phone + ' 成功')
+  } catch (e) {
+    this.toastShow('拨打 ' + phone + ' 失败')
+  }
+},
+
+// 关闭预览窗口 同时重置信息
+closePreview() {
+  this.previewHidden = true
+  this.$apply()
+  this.resetBookingPreview()
+},
+
+// 仅仅用来阻止事件冒泡
+stopBubble() {
+},
+
+// 确认预订
+booking() {
+  if (!this.meetingRoom.id || this.bookings.length < 1) {
+    this.toastShow('请选择要预定的会议室')
+    return
+  }
+
+  const pickTime = this.pickTime(this.bookings)
+  console.log(pickTime)
+  const startTime = pickTime.startTime
+  const endTime = pickTime.endTime
+
+  wepy.navigateTo({
+    url: `detailBooking?date=${this.date}&meeting_room_id=${this.meetingRoom.id}&start_time=${startTime}&end_time=${endTime}`
+  })
+}
+}
+
+resetBookingPreview() {
+  this.booking = {}
+  this.userLoading = true
+  this.user = {}
+
+  this.$apply()
+}
+
+async getMettingRooms(params) {
+  try {
+    const res = await api.meetingRoom(params)
+    console.log(res)
+
+    this.meetingRooms =[{"id":1,"name":"会议室1","times":[{"used":false,"end":"09:30:00"}]},{"id":2,"name":"会议室2","times":[{"used":false,"end":"09:30:00"}]}]// res.data
+    this.$apply()
+  } catch (e) {
+    console.log(e)
+    console.log('获取会议室失败')
+  }
+}
+
+async onLoad(params) {
+  console.log('booking onload')
+
+  this.date = params.date
+  this.locationName =params.location_name
+  this.params = params
+  this.$apply()
+
+  const user = await this.$parent.checkLogin()
+  if (!user) {
+    wepy.navigateBack()
+  }
+
+  this.currentUser = user
+  this.$apply()
+
+// console.log(user)
+
+// if (!user.wanxin) {
+//   log.debug('准备跳转到 bind')
+//   wepy.redirectTo({
+//     url: 'bind'
+//   })
+// }
+
+await this.getMettingRooms(params)
+
+try {
+  const res = await wepy.getSystemInfo()
+// console.log(res)
+// top 60、bottom 98 按 100 算
+this.maxHeight = (res.windowHeight - 60 - 100) + 'px'
+} catch (e) {
+}
+
+this.$parent.globalData.loaded = true
+
+this.$apply()
+}
+
+async onShow() {
+  console.log('booking onshow')
+  if (this.$parent.globalData.loaded) {
+    await this.getMettingRooms(this.params)
+  }
+}
+
+toastShow(message) {
+  this.$invoke('popup', 'show', message)
+}
+
+pickTime(bookings) {
+  const time = {
+    startTime: '99:99:99',
+    endTime: ''
+  }
+  bookings.forEach(item => {
+// 取最小
+if (time.startTime > item.start) {
+  time.startTime = item.start
+}
+
+// 取最大
+if (time.endTime < item.end) {
+  time.endTime = item.end
+}
+})
+
+  return time
+}
+
+// 分享
+onShareAppMessage() {
+  return {
+    title: '会议室预订',
+    path: '/pages/home',
+    success: function(res) {
+    },
+    fail: function(res) {
+    }
+  }
+}
+}
+</script>
