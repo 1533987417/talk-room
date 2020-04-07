@@ -56,7 +56,7 @@ export default class Feedback extends wepy.page {
   onLoad(){
     console.log('初始化');
     var param={};
-    param.url="ws://121.40.140.66:6379/websocket/o0Pgv5UqK9GQWfvGGVAJMnDu0GhQ1"
+    param.url="ws://localhost:8081/websocket/"+this.$parent.globalData.userInfo.openId
     console.log(param);
     var res= wepy.connectSocket(param);
     wepy.onSocketMessage(this.getMessage)
@@ -71,8 +71,6 @@ export default class Feedback extends wepy.page {
       }
     }
   }
-
-
   //获取服务器的推送信息
   getMessage(parm){
     console.log(parm.data)

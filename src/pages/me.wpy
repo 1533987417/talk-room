@@ -1,42 +1,42 @@
 <style lang="less">
-  .me {
+.me {
+  display: flex;
+  flex-direction: column;
+  color: #333;
+
+  .me-item {
+    border-top: 1rpx solid #eeeeee;
+    background-color: #ffffff;
+    padding: 12px;
+
+    &:first-child {
+      border-top: none;
+    }
+  }
+
+  .my-info {
     display: flex;
     flex-direction: column;
-    color: #333;
+    .avatar {
+      text-align: center;
+    }
+    .nickname {
+      padding-top: 20rpx;
+      text-align: center;
+    }
+  }
 
+  .me-item-wrap {
+    margin-top: 20rpx;
     .me-item {
-      border-top: 1rpx solid #eeeeee;
-      background-color: #ffffff;
-      padding: 12px;
-
-      &:first-child {
-        border-top: none;
-      }
-    }
-
-    .my-info {
       display: flex;
-      flex-direction: column;
-      .avatar {
-        text-align: center;
-      }
-      .nickname {
-        padding-top: 20rpx;
-        text-align: center;
-      }
-    }
-
-    .me-item-wrap {
-      margin-top: 20rpx;
-      .me-item {
-        display: flex;
-        justify-content: space-between;
-      }
+      justify-content: space-between;
     }
   }
-  .gray {
-    color: gray;
-  }
+}
+.gray {
+  color: gray;
+}
 </style>
 
 <template>
@@ -76,47 +76,47 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
+import wepy from 'wepy'
 
-  export default class Me extends wepy.page {
-    config = {
-      navigationBarTitleText: '我的',
-      navigationBarBackgroundColor: '#ffffff',
-      enablePullDownRefresh: false
-    }
+export default class Me extends wepy.page {
+  config = {
+    navigationBarTitleText: '我的',
+    navigationBarBackgroundColor: '#ffffff',
+    enablePullDownRefresh: false
+  }
 
-    data = {
-      user: {}
-    }
+  data = {
+    user: {}
+  }
 
-    methods = {
-      navigateTo(url) {
-        if (!url) {
-          return
-        }
-
-        wepy.navigateTo({ url })
-      }
-    }
-
-    onLoad() {
-      console.log('me onload')
-    }
-
-    async onShow() {
-      console.log('me onshow')
-      const user = await this.$parent.checkLogin()
-
-      if (!user.wanxin) {
-        console.log('准备跳转到 bind')
-        wepy.redirectTo({
-          url: 'bind'
-        })
+  methods = {
+    navigateTo(url) {
+      if (!url) {
+        return
       }
 
-      this.user = user
-      this.$apply()
+      wepy.navigateTo({ url })
     }
+  }
+
+  onLoad() {
+    console.log('me onload')
+  }
+
+  async onShow() {
+    console.log('me onshow')
+    const user = await this.$parent.checkLogin()
+
+    if (user==null) {
+      console.log('准备跳转到 bind')
+      wepy.redirectTo({
+        url: 'bind'
+      })
+    }
+
+    this.user = user
+    this.$apply()
+  }
 
     // 分享
     onShareAppMessage() {
@@ -130,4 +130,4 @@
       }
     }
   }
-</script>
+  </script>
