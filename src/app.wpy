@@ -88,7 +88,7 @@ export default class extends wepy.app {
     }
 
     const token = await storage.get('token')
-
+    console.log(token)
     if (token) {
       return await storage.get('userInfo')
     } else {
@@ -118,17 +118,20 @@ export default class extends wepy.app {
       const res = await api.login({
         code: code,
         encrypted_data: weChatUserInfo.encryptedData,
-        iv: weChatUserInfo.iv
+        iv: weChatUserInfo.iv,
+        userInfo:weChatUserInfo.userInfo
       })
 
-      if (res.code !== '200') {
+      if (res.code !== 200) {
         wepy.showToast({
           title: '登录失败请重试',
           icon: 'loading'
         })
       } else {
-        await storage.set('token', res.data.token)
-        await storage.set('userInfo',{"openid":"sss","nickname":"青志"})
+        console.log(res.data.nickName)
+        
+        await storage.set('token', res.data.nickName)
+        await storage.set('userInfo',res.data)
       }
 
       wepy.hideToast()
