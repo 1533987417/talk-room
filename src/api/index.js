@@ -29,7 +29,7 @@ const wxRequest = async (url, params = {}, notice = '加载中...') => {
     header: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + token
+      'Authorization': 'Bearer '
     }
   })
 
@@ -58,7 +58,7 @@ const bind = params => wxRequest(baseUrl + '/user/bind', {
   method: 'POST'
 }, '绑定中...')
 
-const meetingRoom = params => wxRequest(baseUrl + '/meeting_rooms', {
+const meetingRoom = params => wxRequest(baseUrl + '//getRooms', {
   data: params,
   method: 'GET'
 })
@@ -73,7 +73,7 @@ const cancelBook = params => wxRequest(baseUrl + '/bookings/' + params.id, {
 const getBook = params => wxRequest(baseUrl + '/bookings/' + params.id, {
   method: 'GET'
 })
-const addBook = params => wxRequest(baseUrl + '/bookings', {
+const addBook = params => wxRequest(baseUrl + '/saveMeeting', {
   data: params,
   method: 'POST'
 })

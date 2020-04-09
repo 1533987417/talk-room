@@ -93,7 +93,7 @@
     <view class="wrap">
       <view class="time">
         <view class="col">
-          <text>08:30 -</text>
+          <text>09:00 -</text>
         </view>
         <view wx:for="{{timeListShow}}" wx:key="id" class="col">
           <text>{{item.end}} -</text>
@@ -105,7 +105,7 @@
           <view class="col name">{{room.name}}</view>
           <view wx:for="{{room.times}}" wx:key="id" wx:for-item="time" class="col"
           :class="{disable: todayDate === selectedDate && nowTime >= time.end, used: time.used, selected: meetingRoom.id === room.id && selected[time.id]}"
-          @tap="selectTime({{time}}, {{room}})">{{currentUser.id == time.user_id ? '我' : ''}}</view>
+          @tap="selectTime({{time}}, {{room}})">{{currentUser.openId == time.openId ? '我' : ''}}</view>
         </view>
       </view>
     </view>
@@ -164,7 +164,6 @@ if (time.used) {
 return
 }
 
-console.log(this.nowTime,time.end)
 if (this.todayDate === this.selectedDate && this.nowTime >= time.end) {
 this.$invoke('popup', 'show', '时间已过，不可预订')
 return
@@ -179,8 +178,8 @@ this.meetingRoom = room
 if (this.selected[time.id]) {
 delete (this.selected[time.id])
 } else {
+console.log("未选择")
 const selectedIds = Object.keys(this.selected)
-
 if (selectedIds.length === 1) {
 if (Math.abs(selectedIds[0] - parseInt(time.id)) > 1) {
 this.$invoke('popup', 'show', '请选择相邻的 2 个时间段')
@@ -198,16 +197,10 @@ this.selected[time.id] = true
 
 console.log(this.selected)
 const selectedTime = []
-this.timeList.forEach(item => {
-// console.log(item)
 for (let i in this.selected) {
-if (item.id == i) {
-console.log(item)
-selectedTime.push(item)
-break
+console.log(i)
+selectedTime.push(i)
 }
-}
-})
 
 this.$apply()
 this.$emit('times-selected', this.meetingRoom, selectedTime)
@@ -266,9 +259,6 @@ this.$emit('times-selected', this.meetingRoom, selectedTime)
 //   for (let i in meetingRoom.times) {
 //     temp[meetingRoom.times[i].id] = meetingRoom.times[i]
 //   }
-
-//   while (a < b && meetingRoom.times) {
-//     if (temp[a] && temp[a].used) {
 //       return true
 //     }
 //     a++
@@ -279,10 +269,13 @@ async onLoad() {
 try {
 //TODO:request
 //const res = await api.getSchedules()
-this.timeList = [{"id":1,"start":"09:00:00","end":"09:30:00"},{"id":2,"start":"09:30:00","end":"10:00:00"}]
+this.timeList = [{"id":1,"start":"09:00:00","end":"10:00:00"},{"id":2,"start":"10:00:00","end":"11:00:00"},{"id":3,"start":"11:00:00","end":"12:00:00"},{"id":4,"start":"12:00:00","end":"13:00:00"},{"id":5,"start":"13:00:00","end":"14:00:00"},{"id":6,"start":"14:00:00","end":"15:00:00"},{"id":7,"start":"15:00:00","end":"16:00:00"},{"id":8,"start":"16:00:00","end":"17:00:00"},{"id":9,"start":"17:00:00","end":"18:00:00"}]
 
 const temp = []
 this.timeList.forEach(item => {
+
+//   while (a < b && meetingRoom.times) {
+//     if (temp[a] && temp[a].used) {
 temp.push({
 id: item.id,
 start: item.start.substr(0, 5),

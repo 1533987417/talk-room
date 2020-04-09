@@ -1,23 +1,23 @@
 <style lang="less">
-  .userinfo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+.userinfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-  .userinfo-avatar {
-    width: 80rpx;
-    height: 80rpx;
-    border-radius: 50%;
-  }
+.userinfo-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+}
 
-  .userinfo-nickname {
-    color: #aaa;
-  }
+.userinfo-nickname {
+  color: #aaa;
+}
 
-  .container, .meeting-room {
-    height: 100%;
-  }
+.container, .meeting-room {
+  height: 100%;
+}
 </style>
 <template>
   <view class="container">
@@ -29,43 +29,49 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
-  import api from '../api'
-  import storage from '../utils/storage'
-  import bookingDetail from '../components/bookingDetail'
+import wepy from 'wepy'
+import api from '../api'
+import storage from '../utils/storage'
+import bookingDetail from '../components/bookingDetail'
 
-  export default class DetailBooking extends wepy.page {
-    config = {
-      navigationBarTitleText: '预订详情',
-      enablePullDownRefresh: false
-    }
-    components = {
-      bookingDetail: bookingDetail
-    }
+export default class DetailBooking extends wepy.page {
+  config = {
+    navigationBarTitleText: '预订详情',
+    enablePullDownRefresh: false
+  }
+  components = {
+    bookingDetail: bookingDetail
+  }
 
-    data = {
-      bookingDetail: {
-        meeting_room_id: 2,
-        floor: 1,
-        location_id: 1,
-        name: '7楼3会',
-        date: '2017-07-25',
-        start_time: '16:30',
-        end_time: '17:30',
-        current: true
-      }
+  data = {
+    bookingDetail: {
+      meeting_room_id: 2,
+      floor: 1,
+      location_id: 1,
+      name: '7楼3会',
+      date: '2017-07-25',
+      start_time: '16:30',
+      end_time: '17:30',
+      current: true,
+      times:"",
+      locationName:""
     }
+  }
 
-    computed = {
-      now () {
-        return +new Date()
-      }
+  computed = {
+    now () {
+      return +new Date()
     }
+  }
 
-    async onLoad(e) {
+  async onLoad(e) {
       //storage.get("userInfo");
       const val = await storage.get('userInfo')
+      console.log("传参")
+      this.bookingDetail.times=e.times
+      this.bookingDetail.locationName= e.locationName
 
+      console.log(e)
       if (e.id) {
         const res = await api.getBook(e)
         if (res.code === '200') {
@@ -120,9 +126,13 @@
       }
     }
     async addBooking(bookingDetail) {
+      console.log("bookingDetail")
+      bookingDetail.times=this.bookingDetail.times
+      bookingDetail.locationName=  this.bookingDetail.locationName
+      bookingDetail.openId=this.$parent.globalData.userInfo.openId
       const res = await api.addBook(bookingDetail)
 
-      if (res.code === '200') {
+      if (res.code === 200) {
         wx.showToast({
           title: '成功',
           icon: 'success',
@@ -141,4 +151,4 @@
       }
     }
   }
-</script>
+  </script>

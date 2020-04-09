@@ -353,7 +353,7 @@ booking() {
   const endTime = pickTime.endTime
 
   wepy.navigateTo({
-    url: `detailBooking?date=${this.date}&meeting_room_id=${this.meetingRoom.id}&start_time=${startTime}&end_time=${endTime}`
+    url: `detailBooking?locationName=${this.locationName}&date=${this.date}&meeting_room_id=${this.meetingRoom.id}&start_time=${startTime}&end_time=${endTime}&times=`+this.bookings
   })
 }
 }
@@ -369,9 +369,9 @@ resetBookingPreview() {
 async getMettingRooms(params) {
   try {
     const res = await api.meetingRoom(params)
-    console.log(res)
+    console.log("res=====>",res)
 
-    this.meetingRooms =[{"id":1,"name":"会议室1","times":[{"used":false,"end":"09:30:00"}]},{"id":2,"name":"会议室2","times":[{"used":false,"end":"09:30:00"}]}]// res.data
+    this.meetingRooms = res.data
     this.$apply()
   } catch (e) {
     console.log(e)
@@ -435,7 +435,10 @@ pickTime(bookings) {
     startTime: '99:99:99',
     endTime: ''
   }
-  bookings.forEach(item => {
+  this.meetingRoom.times.forEach(
+    item=>{
+      bookings.forEach(d=>{
+        if(item.id==d){
 // 取最小
 if (time.startTime > item.start) {
   time.startTime = item.start
@@ -445,10 +448,11 @@ if (time.startTime > item.start) {
 if (time.endTime < item.end) {
   time.endTime = item.end
 }
-})
-
+}})})
   return time
 }
+
+
 
 // 分享
 onShareAppMessage() {
