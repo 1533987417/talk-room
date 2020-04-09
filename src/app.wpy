@@ -103,7 +103,12 @@ export default class extends wepy.app {
     })
     return res.data
   }
-
+  async getMeetingList(openId) {
+    const res = await api.meetingList({
+      openId: openId,
+    })
+    return res.data
+  }
   async login() {
     wepy.showToast({
       title: '登录中...',
@@ -129,7 +134,6 @@ export default class extends wepy.app {
         })
       } else {
         console.log(res.data.nickName)
-        
         await storage.set('token', res.data.nickName)
         await storage.set('userInfo',res.data)
       }
