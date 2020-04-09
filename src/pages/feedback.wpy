@@ -142,7 +142,7 @@ export default class Feedback extends wepy.page {
   console.log('初始化');
   this.interval = setInterval(function () {
     wx.request({
-          url: "http://121.40.140.66:6379/getRoomInfo", //仅为示例，并非真实的接口地址
+          url: "https://leshijie.online:6379/getRoomInfo", //仅为示例，并非真实的接口地址
           success(res) {
             var num = res.data.data.length
             wx.setNavigationBarTitle({
