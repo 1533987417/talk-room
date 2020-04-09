@@ -1,73 +1,73 @@
 <style lang="less">
-  .title {
-    font-size: 16px;
-    line-height: 30px;
-    height: 30px;
-  }
-  .btn {
-    display: inline-block;
-    width: 20%;
-    height: 70rpx;
-    font-size: 32rpx;
-    color:  rgba(255,255,255,.5);
-    background-color:#f1f1f1;;
-    line-height: 70rpx;
-  }
-  .leftMsg {
-    font-size: 35rpx;
-    color: #444;
-    line-height: 7vw;
-    padding: 2vw 2.5vw;
-    background-color: #fff;
-    margin-left: -1.6vw;
-    border-radius: 10rpx;
-    z-index: 10;
-  }
+.title {
+  font-size: 16px;
+  line-height: 30px;
+  height: 30px;
+}
+.btn {
+  display: inline-block;
+  width: 20%;
+  height: 70rpx;
+  font-size: 32rpx;
+  color:  rgba(255,255,255,.5);
+  background-color:#f1f1f1;;
+  line-height: 70rpx;
+}
+.leftMsg {
+  font-size: 35rpx;
+  color: #444;
+  line-height: 7vw;
+  padding: 2vw 2.5vw;
+  background-color: #fff;
+  margin-left: -1.6vw;
+  border-radius: 10rpx;
+  z-index: 10;
+}
 
-  .rightMsg {
-    font-size: 35rpx;
-    color: #444;
-    line-height: 7vw;
-    padding: 2vw 2.5vw;
-    background-color: #96EB6A;
-    margin-right: -1.6vw;
-    border-radius: 10rpx;
-    z-index: 10;
-  }
-  .inputRoom {
-    width:100vw;
-    height: 16vw;
-    border-top: 1px solid #cdcdcd;
-    background-color: #f1f1f1;
-    position: fixed;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-    z-index: 20;
-  }
+.rightMsg {
+  font-size: 35rpx;
+  color: #444;
+  line-height: 7vw;
+  padding: 2vw 2.5vw;
+  background-color: #96EB6A;
+  margin-right: -1.6vw;
+  border-radius: 10rpx;
+  z-index: 10;
+}
+.inputRoom {
+  width:100vw;
+  height: 16vw;
+  border-top: 1px solid #cdcdcd;
+  background-color: #f1f1f1;
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  z-index: 20;
+}
 
-  input {
-    width: 76vw;
-    height: 9.33vw;
-    background-color: #fff;
-    border-radius: 40rpx;
-    margin-left: 2vw;
-    padding: 0 3vw;
-    font-size: 28rpx;
-    color: #444;
-  }
+input {
+  width: 76vw;
+  height: 9.33vw;
+  background-color: #fff;
+  border-radius: 40rpx;
+  margin-left: 2vw;
+  padding: 0 3vw;
+  font-size: 28rpx;
+  color: #444;
+}
 </style>
 <template>
-<!--  其他人-->
+  <!--  其他人-->
   <scroll-view scroll-y scroll-into-view='{{toView}}' style='height: {{scrollHeight}};' >
     <block wx:for="{{messageList}}" wx:for-index="index" wx:for-item="messagesingle">
-    <view  wx:if ="{{messagesingle.sender.nickName != myName}}" id='msg-{{index}}'  style='display: flex; padding: 2vw 11vw 2vw 2vw;'>
-      <view style='width: 11vw; height: 11vw;'>
-        <image style='width: 11vw; height: 11vw; border-radius: 10rpx;' src="{{messagesingle.sender.avatar}}"></image>
+      <view  wx:if ="{{messagesingle.sender.nickName != myName}}" id='msg-{{index}}'  style='display: flex; padding: 2vw 11vw 2vw 2vw;'>
+        <view style='width: 11vw; height: 11vw;'>
+          <image style='width: 11vw; height: 11vw; border-radius: 10rpx;' src="{{messagesingle.sender.avatar}}"></image>
+        </view>
+        <view class='leftMsg'>{{messagesingle.message}}</view>
       </view>
-      <view class='leftMsg'>{{messagesingle.message}}</view>
-    </view>
-<!--      自己-->
+      <!--      自己-->
       <view wx:else id='msg-{{index}}' style='display: flex; justify-content: flex-end; padding: 2vw 2vw 2vw 11vw;'>
         <view class='rightMsg'>{{messagesingle.message}}</view>
 
@@ -87,62 +87,62 @@
   </scroll-view>
 </template>
 <script>
-  import wepy from 'wepy'
-  import api from '../api'
-  import Popup from '../components/popup'
+import wepy from 'wepy'
+import api from '../api'
+import Popup from '../components/popup'
 
-  export default class Feedback extends wepy.page {
-    config = {
-      navigationBarTitleText: '聊天室',
-      enablePullDownRefresh: false
-    }
-    components = {
-      popup: Popup
-    }
-    data = {
-      realval:"",
-      userinfo:{},
-      scrollHeight: '100vh',
-      inputBottom: 0,
-      messageList: [],
-      inputBottom1: 1,
-      myName:"",
-      peopleList: [],
-      interval:0,
-      toView:"msg-1"
+export default class Feedback extends wepy.page {
+  config = {
+    navigationBarTitleText: '聊天室',
+    enablePullDownRefresh: false
+  }
+  components = {
+    popup: Popup
+  }
+  data = {
+    realval:"",
+    userinfo:{},
+    scrollHeight: '100vh',
+    inputBottom: 0,
+    messageList: [],
+    inputBottom1: 1,
+    myName:"",
+    peopleList: [],
+    interval:0,
+    toView:"msg-1"
 
-    }
-     async onShow() {
-       var param = {};
-       var userInfoRes = await wepy.getStorage({
-         key: 'userInfo'
-       })
-       this.userinfo = userInfoRes.data;
-       this.$apply()
-       param.url = "ws://121.40.140.66:6379/websocket/" + this.userinfo.openId
-       console.log(this.userinfo);
-       var _this = this;
-       var res = wepy.connectSocket(param);
-       wx.onSocketMessage(res => {
-           var obj = JSON.parse(res.data)
-           _this.messageList.push(obj);
-           _this.$apply();
-           console.log(_this.messageList)
-         }
-       )
-     }
-    async onLoad() {
-      var userInfoRes = await wepy.getStorage({
-        key: 'userInfo'
-      })
-      this.userinfo = userInfoRes.data;
-      this.$apply()
-      console.log(this.userinfo)
-      this.myName = this.userinfo.nickName;
-      console.log('初始化');
-      this.interval = setInterval(function () {
-        wx.request({
-          url: "http://121.40.140.66:6379/getRoomInfo", //仅为示例，并非真实的接口地址
+  }
+  async onShow() {
+   var param = {};
+   var userInfoRes = await wepy.getStorage({
+     key: 'userInfo'
+   })
+   this.userinfo = userInfoRes.data;
+   this.$apply()
+   param.url = "wss://leshijie.online:6379/websocket/" + this.userinfo.openId
+   console.log(this.userinfo);
+   var _this = this;
+   var res = wepy.connectSocket(param);
+   wx.onSocketMessage(res => {
+     var obj = JSON.parse(res.data)
+     _this.messageList.push(obj);
+     _this.$apply();
+     console.log(_this.messageList)
+   }
+   )
+ }
+ async onLoad() {
+  var userInfoRes = await wepy.getStorage({
+    key: 'userInfo'
+  })
+  this.userinfo = userInfoRes.data;
+  this.$apply()
+  console.log(this.userinfo)
+  this.myName = this.userinfo.nickName;
+  console.log('初始化');
+  this.interval = setInterval(function () {
+    wx.request({
+          url: "https://leshijie.online:6379/getRoomInfo", //仅为示例，并非真实的接口地址
           success(res) {
             var num = res.data.data.length
             wx.setNavigationBarTitle({
@@ -150,30 +150,29 @@
             })
           }
         })
-      }, 5000)
+  }, 5000)
+}
+methods = {
+  formSubmit(e) {
+    const that = this
+    if (e.detail.value.content.length < 1) {
+      this.toastShow('请输入反馈信息！')
+    } else {
+      that.submitFeedback(e.detail.value.content);
     }
-    methods = {
-      formSubmit(e) {
-        debugger
-        const that = this
-        if (e.detail.value.content.length < 1) {
-          this.toastShow('请输入信息！')
-        } else {
-          that.submitFeedback(e.detail.value.content);
-        }
-        this.setData({
+    this.setData({
           realval : '',//将data的inputValue清空
         });
-        this.toView = "msg-" + (this.messageList.length - 1)
-        this.$apply()
-      },
+    this.toView = "msg-" + (this.messageList.length - 1)
+    this.$apply()
+  },
 
-    }
-    onUnload(){
-      console.log("页面影藏")
-      wx.closeSocket()
-      clearInterval(this.interval)
-    }
+}
+onUnload(){
+  console.log("页面影藏")
+  wx.closeSocket()
+  clearInterval(this.interval)
+}
     //向服务器推信息
     async submitFeedback(obj) {
       var param={};
@@ -200,4 +199,4 @@
       this.$invoke('popup', 'show', message)
     }
   }
-</script>
+  </script>

@@ -88,7 +88,6 @@ export default class extends wepy.app {
     }
 
     const token = await storage.get('token')
-    console.log(token)
     if (token) {
       return await storage.get('userInfo')
     } else {
@@ -124,7 +123,8 @@ export default class extends wepy.app {
         code: code,
         encrypted_data: weChatUserInfo.encryptedData,
         iv: weChatUserInfo.iv,
-        userInfo:weChatUserInfo.userInfo
+        userInfo:weChatUserInfo.userInfo,
+        type:0
       })
 
       if (res.code !== 200) {
@@ -160,28 +160,24 @@ export default class extends wepy.app {
   async getUserInfo() {
     try {
       const res = await wepy.getUserInfo({ withCredentials: true })
+      console.log("res")
+      console.log(res)
+
       if(res.errMsg=='getUserInfo:fail scope unauthorized'){
         console.log("未授权")
-
+        wepy.redirectTo({
+          url: 'bind'
+        })
       }
       return res
     } catch (e) {
       console.log(e)
 
-      if (e.errMsg === 'getUserInfo:fail auth deny') {
+      if (e.errMsg === 'getUserInfo:fail scope unauthorized') {
         console.log('获取用户信息失败')
-
-        const res = await wepy.openSetting()
-
-        console.log(res)
-        if (res.authSetting['scope.userInfo']) {
-          this.login()
-        } else {
-          wepy.showModal({
-            title: '提醒',
-            content: '请允许小程序获取用户信息'
-          })
-        }
+        wepy.redirectTo({
+          url: 'bind'
+        })
       }
       return null
     }
