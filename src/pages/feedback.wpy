@@ -1,104 +1,203 @@
 <style lang="less">
-.content {
-  background: #fff;
-  padding: 8px;
-  font-size: 14px;
-}
-.title {
-  font-size: 16px;
-  line-height: 30px;
-  height: 30px;
-}
-.btn-container {
-  margin: 20px 10rpx 0;
-}
-textarea {
-  border: 1px solid #ccc;
-  padding: 5px;
-  width: auto;
-  display: block;
-}
-.btn {
-  width: 100%;
-  height: 40px;
-  line-height:40px;
-  font-size: 16px;
-  border-radius: 2px;
-}
+  .title {
+    font-size: 16px;
+    line-height: 30px;
+    height: 30px;
+  }
+  .btn {
+    display: inline-block;
+    width: 20%;
+    height: 70rpx;
+    font-size: 32rpx;
+    color:  rgba(255,255,255,.5);
+    background-color:#f1f1f1;;
+    line-height: 70rpx;
+  }
+  .leftMsg {
+    font-size: 35rpx;
+    color: #444;
+    line-height: 7vw;
+    padding: 2vw 2.5vw;
+    background-color: #fff;
+    margin-left: -1.6vw;
+    border-radius: 10rpx;
+    z-index: 10;
+  }
+
+  .rightMsg {
+    font-size: 35rpx;
+    color: #444;
+    line-height: 7vw;
+    padding: 2vw 2.5vw;
+    background-color: #96EB6A;
+    margin-right: -1.6vw;
+    border-radius: 10rpx;
+    z-index: 10;
+  }
+  .inputRoom {
+    width:100vw;
+    height: 16vw;
+    border-top: 1px solid #cdcdcd;
+    background-color: #f1f1f1;
+    position: fixed;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    z-index: 20;
+  }
+
+  input {
+    width: 76vw;
+    height: 9.33vw;
+    background-color: #fff;
+    border-radius: 40rpx;
+    margin-left: 2vw;
+    padding: 0 3vw;
+    font-size: 28rpx;
+    color: #444;
+  }
 </style>
 <template>
-  <view class="container">
-    <form bindsubmit="formSubmit">
-      <view class="content">
-        <view class="title">反馈内容（200 字以内）</view>
-        <textarea placeholder="请输入反馈内容" name="content" auto-focus placeholder-style="color:#ccc;" />
+<!--  其他人-->
+  <scroll-view scroll-y scroll-into-view='{{toView}}' style='height: {{scrollHeight}};' >
+    <block wx:for="{{messageList}}" wx:for-index="index" wx:for-item="messagesingle">
+    <view  wx:if ="{{messagesingle.sender.nickName != myName}}" id='msg-{{index}}'  style='display: flex; padding: 2vw 11vw 2vw 2vw;'>
+      <view style='width: 11vw; height: 11vw;'>
+        <image style='width: 11vw; height: 11vw; border-radius: 10rpx;' src="{{messagesingle.sender.avatar}}"></image>
       </view>
-      <view class="btn-container"><button class="btn" formType="submit" type="primary">提交</button></view>
+      <view class='leftMsg'>{{messagesingle.message}}</view>
+    </view>
+<!--      自己-->
+      <view wx:else id='msg-{{index}}' style='display: flex; justify-content: flex-end; padding: 2vw 2vw 2vw 11vw;'>
+        <view class='rightMsg'>{{messagesingle.message}}</view>
+
+        <view style='width: 11vw; height: 11vw;'>
+          <image style='width: 11vw; height: 11vw; border-radius: 10rpx;' src='{{messagesingle.sender.avatar}}'></image>
+        </view>
+      </view>
+    </block>
+    <!-- 占位 -->
+    <view style='width: 100%; height: 18vw;'></view>
+    <form bindsubmit="formSubmit">
+      <view class='inputRoom' style='bottom:{{inputBottom}};display: flex; justify-content: flex-end;'>
+        <input placeholder="请输入反馈内容" name="content" value="{{realval}}"></input>
+        <button class="btn" formType="submit" type="primary" bindfocus='focus'>提交</button>
+      </view>
     </form>
-  </view>
-  <popup></popup>
+  </scroll-view>
 </template>
-
 <script>
-import wepy from 'wepy'
-import api from '../api'
-import Popup from '../components/popup'
+  import wepy from 'wepy'
+  import api from '../api'
+  import Popup from '../components/popup'
 
-export default class Feedback extends wepy.page {
-  config = {
-    navigationBarTitleText: '反馈',
-    enablePullDownRefresh: false
-  }
-  components = {
-    popup: Popup
-  }
-  data = {}
-  onLoad(){
-    console.log('初始化');
-    var param={};
-    param.url="ws://121.40.140.66:6379/websocket/"+this.$parent.globalData.userInfo.openId
-    console.log(param);
-    var res= wepy.connectSocket(param);
-    wepy.onSocketMessage(this.getMessage)
-  }
-  methods = {
-    formSubmit(e) {
-      const that = this
-      if (e.detail.value.content.length < 1) {
-        this.toastShow('请输入反馈信息！')
+  export default class Feedback extends wepy.page {
+    config = {
+      navigationBarTitleText: '聊天室',
+      enablePullDownRefresh: false
+    }
+    components = {
+      popup: Popup
+    }
+    data = {
+      realval:"",
+      userinfo:{},
+      scrollHeight: '100vh',
+      inputBottom: 0,
+      messageList: [],
+      inputBottom1: 1,
+      myName:"",
+      peopleList: [],
+      interval:0,
+      toView:"msg-1"
+
+    }
+     async onShow() {
+       var param = {};
+       var userInfoRes = await wepy.getStorage({
+         key: 'userInfo'
+       })
+       this.userinfo = userInfoRes.data;
+       this.$apply()
+       param.url = "ws://121.40.140.66:6379/websocket/" + this.userinfo.openId
+       console.log(this.userinfo);
+       var _this = this;
+       var res = wepy.connectSocket(param);
+       wx.onSocketMessage(res => {
+           var obj = JSON.parse(res.data)
+           _this.messageList.push(obj);
+           _this.$apply();
+           console.log(_this.messageList)
+         }
+       )
+     }
+    async onLoad() {
+      var userInfoRes = await wepy.getStorage({
+        key: 'userInfo'
+      })
+      this.userinfo = userInfoRes.data;
+      this.$apply()
+      console.log(this.userinfo)
+      this.myName = this.userinfo.nickName;
+      console.log('初始化');
+      this.interval = setInterval(function () {
+        wx.request({
+          url: "http://121.40.140.66:6379/getRoomInfo", //仅为示例，并非真实的接口地址
+          success(res) {
+            var num = res.data.data.length
+            wx.setNavigationBarTitle({
+              title: '聊天室人数：' + num
+            })
+          }
+        })
+      }, 5000)
+    }
+    methods = {
+      formSubmit(e) {
+        debugger
+        const that = this
+        if (e.detail.value.content.length < 1) {
+          this.toastShow('请输入反馈信息！')
+        } else {
+          that.submitFeedback(e.detail.value.content);
+        }
+        this.setData({
+          realval : '',//将data的inputValue清空
+        });
+        this.toView = "msg-" + (this.messageList.length - 1)
+        this.$apply()
+      },
+
+    }
+    onUnload(){
+      console.log("页面影藏")
+      wx.closeSocket()
+      clearInterval(this.interval)
+    }
+    //向服务器推信息
+    async submitFeedback(obj) {
+      var param={};
+      param.data=obj;
+      let feedback=await wepy.sendSocketMessage(param)
+      console.log(feedback.errMsg)
+      if (feedback.errMsg=== 'sendSocketMessage:ok') {
+        wx.showToast({
+          title: '成功',
+          icon: 'success',
+          duration: 1000
+        })
       } else {
-        that.submitFeedback(e.detail.value.content)
+        wx.showModal({
+          title: '错误',
+          content: feedback.message,
+          showCancel: false,
+          success: function(res) {
+          }
+        })
       }
     }
-  }
-  //获取服务器的推送信息
-  getMessage(parm){
-    console.log(parm.data)
-  }
-  //向服务器推信息
-  async submitFeedback(obj) {
-    var param={};
-    param.data=obj;
-    let feedback=await wepy.sendSocketMessage(param)
-    console.log(feedback.errMsg)
-    if (feedback.errMsg=== 'sendSocketMessage:ok') {
-      wx.showToast({
-        title: '成功',
-        icon: 'success',
-        duration: 1000
-      })
-    } else {
-      wx.showModal({
-        title: '错误',
-        content: feedback.message,
-        showCancel: false,
-        success: function(res) {
-        }
-      })
+    toastShow(message) {
+      this.$invoke('popup', 'show', message)
     }
   }
-  toastShow(message) {
-    this.$invoke('popup', 'show', message)
-  }
-}
 </script>

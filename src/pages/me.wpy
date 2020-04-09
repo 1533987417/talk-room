@@ -44,10 +44,10 @@
     <view class="me-item">
       <view class="my-info">
         <view class="avatar">
-          <image style="width: 180rpx; height: 180rpx; border-radius: 50%;" src="{{user.avatar}}"></image>
+          <image style="width: 180rpx; height: 180rpx; border-radius: 50%;" src="{{user.avatarUrl}}"></image>
         </view>
         <view class="nickname">
-          <text>{{user.name || user.nickname}}</text>
+          <text>{{user.nickName}}</text>
         </view>
       </view>
     </view>
@@ -99,8 +99,11 @@ export default class Me extends wepy.page {
     }
   }
 
-  onLoad() {
-    console.log('me onload')
+  async onLoad() {
+    var userInfoRes = await wepy.getStorage({
+      key: 'userInfo'
+    })
+    this.user = userInfoRes.data;
   }
 
   async onShow() {
