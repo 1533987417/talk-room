@@ -1,9 +1,9 @@
 import wepy from 'wepy'
 import storage from '../utils/storage'
 
-//const baseUrl = 'http://121.40.140.66:6379/'
+const baseUrl = 'https://leshijie.online:6379/'
 //const baseUrl = 'https://booking.ffan.com/api'
-const baseUrl = 'http://localhost:8081/'
+//const baseUrl = 'http://localhost:8081/'
 
 const wxRequest = async (url, params = {}, notice = '加载中...') => {
   if (wepy.hideToast) {
