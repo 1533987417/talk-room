@@ -131,6 +131,8 @@ export default class extends wepy.app {
         console.log(res.data.nickName)
         await storage.set('token', res.data.nickName)
         await storage.set('userInfo',res.data)
+        this.globalData.token = await storage.get('token', '')
+        this.globalData.userInfo = await storage.get('userInfo', null)
       }
 
       wepy.hideToast()
