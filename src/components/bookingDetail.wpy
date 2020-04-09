@@ -92,7 +92,7 @@
           </view>
         </view>
         <view class="flex-wrp btn-container" wx:if="{{!!bookingDetail.id && bookingDetail.current}}"><button class="btn" type="primary" @tap="cancelBooking({{bookingDetail.id}})">取消预订</button></view>
-        <view class="flex-wrp btn-container" wx:if="{{!bookingDetail.id}}"><button class="btn" formType="submit" type="primary">确认预订</button></view>
+        <view class="flex-wrp btn-container" wx:if="{{!bookingDetail.id}}"><button class="btn" formType="submit" type="primary">取消预订</button></view>
       </view>
     </form>
   </scroll-view>

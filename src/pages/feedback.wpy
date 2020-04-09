@@ -59,7 +59,14 @@
 </style>
 <template>
 <!--  其他人-->
-  <scroll-view scroll-y scroll-into-view='{{toView}}' style='height: {{scrollHeight}};' >
+  <scroll-view scroll-x  style='weight: 80vw;' >
+    <view   style='display: flex; padding: 2vw 11vw 2vw 2vw;'>
+      <view style='width: 11vw; height: 11vw;' wx:for="{{peopleList}}" wx:key="{{index}}" wx:for-item="people" style="margin-left: 1vw;">
+        <image style='width: 11vw; height: 11vw; border-radius: 10rpx;' src="{{people.avatar}}"></image>
+      </view>
+    </view>
+  </scroll-view>
+  <scroll-view scroll-y scroll-into-view='{{toView}}' style='height: {{scrollHeight}};padding-top: 3vw' >
     <block wx:for="{{messageList}}" wx:for-index="index" wx:for-item="messagesingle">
     <view  wx:if ="{{messagesingle.sender.nickName != myName}}" id='msg-{{index}}'  style='display: flex; padding: 2vw 11vw 2vw 2vw;'>
       <view style='width: 11vw; height: 11vw;'>
@@ -102,7 +109,7 @@
     data = {
       realval:"",
       userinfo:{},
-      scrollHeight: '100vh',
+      scrollHeight: '89vh',
       inputBottom: 0,
       messageList: [],
       inputBottom1: 1,
@@ -120,14 +127,12 @@
        this.userinfo = userInfoRes.data;
        this.$apply()
        param.url = "wss://leshijie.online:6379/websocket/" + this.userinfo.openId
-       console.log(this.userinfo);
        var _this = this;
        var res = wepy.connectSocket(param);
        wx.onSocketMessage(res => {
            var obj = JSON.parse(res.data)
            _this.messageList.push(obj);
            _this.$apply();
-           console.log(_this.messageList)
          }
        )
      }
@@ -137,13 +142,16 @@
       })
       this.userinfo = userInfoRes.data;
       this.$apply()
-      console.log(this.userinfo)
       this.myName = this.userinfo.nickName;
       console.log('初始化');
+      var _this = this;
       this.interval = setInterval(function () {
         wx.request({
           url: "https://leshijie.online:6379/getRoomInfo", //仅为示例，并非真实的接口地址
           success(res) {
+            _this.peopleList = res.data.data;
+            _this.$apply();
+            console.log(_this.peopleList)
             var num = res.data.data.length
             wx.setNavigationBarTitle({
               title: '聊天室人数：' + num
@@ -154,7 +162,6 @@
     }
     methods = {
       formSubmit(e) {
-        debugger
         const that = this
         if (e.detail.value.content.length < 1) {
           this.toastShow('请输入信息！')
@@ -179,7 +186,6 @@
       var param={};
       param.data=obj;
       let feedback=await wepy.sendSocketMessage(param)
-      console.log(feedback.errMsg)
       if (feedback.errMsg=== 'sendSocketMessage:ok') {
         wx.showToast({
           title: '成功',
