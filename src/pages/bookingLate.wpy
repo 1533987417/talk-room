@@ -55,9 +55,6 @@ export default class DetailBooking extends wepy.page {
   }
 
   async onLoad(e) {
-    debugger
-    console.log("11111111")
-    console.log(e)
     const val = await storage.get('userInfo')
     if(e.id){
       this.bookingDetail.id = e.id;
@@ -79,60 +76,60 @@ export default class DetailBooking extends wepy.page {
     console.log(this.bookingDetail)
     this.bookingDetail.current=true;
     this.$apply()
+  }
+  events = {
+    'index-emit': (...args) => {
+      let $event = args[args.length - 1]
+      console.log(`${this.$name} receive ${$event.name} from ${$event.source.$name}`)
     }
-    events = {
-      'index-emit': (...args) => {
-        let $event = args[args.length - 1]
-        console.log(`${this.$name} receive ${$event.name} from ${$event.source.$name}`)
-      }
-    };
-    async cancelBooking(id) {
-      const res = await api.cancelBook({
-        id: id
+  };
+  async cancelBooking(id) {
+    const res = await api.cancelBook({
+      id: id
+    })
+
+    if (res.code === '200') {
+      wx.showToast({
+        title: '成功',
+        icon: 'success',
+        duration: 1000
       })
-
-      if (res.code === '200') {
-        wx.showToast({
-          title: '成功',
-          icon: 'success',
-          duration: 1000
-        })
-        wx.navigateBack()
-        this.$apply()
-      } else {
-        wx.showModal({
-          title: '错误',
-          content: res.message,
-          showCancel: false,
-          success: function(res) {
-          }
-        })
-      }
-    }
-    async addBooking(bookingDetail) {
-      console.log("bookingDetail")
-      bookingDetail.times=this.bookingDetail.times
-      bookingDetail.locationName=  this.bookingDetail.locationName
-      bookingDetail.openId=this.$parent.globalData.userInfo.openId
-      const res = await api.addBook(bookingDetail)
-
-      if (res.code === 200) {
-        wx.showToast({
-          title: '成功',
-          icon: 'success',
-          duration: 1000
-        })
-        wx.navigateBack()
-        this.$apply()
-      } else {
-        wx.showModal({
-          title: '错误',
-          content: res.message,
-          showCancel: false,
-          success: function(res) {
-          }
-        })
-      }
+      wx.navigateBack()
+      this.$apply()
+    } else {
+      wx.showModal({
+        title: '错误',
+        content: res.message,
+        showCancel: false,
+        success: function(res) {
+        }
+      })
     }
   }
-  </script>
+  async addBooking(bookingDetail) {
+    console.log("bookingDetail")
+    bookingDetail.times=this.bookingDetail.times
+    bookingDetail.locationName=  this.bookingDetail.locationName
+    bookingDetail.openId=this.$parent.globalData.userInfo.openId
+    const res = await api.addBook(bookingDetail)
+
+    if (res.code === 200) {
+      wx.showToast({
+        title: '成功',
+        icon: 'success',
+        duration: 1000
+      })
+      wx.navigateBack()
+      this.$apply()
+    } else {
+      wx.showModal({
+        title: '错误',
+        content: res.message,
+        showCancel: false,
+        success: function(res) {
+        }
+      })
+    }
+  }
+}
+</script>
