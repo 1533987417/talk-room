@@ -100,8 +100,19 @@ export default class extends wepy.app {
      await api.cancelMeeting({
       "meeting_room_id":id,
       "times":times,
-      "openId": "oTAhG4xueaQPYtcbS875YSSM6DOQ"
+      "openId": this.globalData.userInfo.openId
     })
+  }
+  async setUser() {
+     await api.setUser({
+      "openId": this.globalData.userInfo.openId
+    })
+  }
+  async getUsers() {
+    const res = await api.getUsers({
+      "openId":  this.globalData.userInfo.openId
+    })
+    return res.data
   }
 
   async getBookingList(offset, limit) {

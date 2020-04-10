@@ -138,6 +138,9 @@
           success: function(res) {
             if (res.confirm) {
               that.$parent.$parent.cancelMeeting(param.id,param.timeIds)
+              wx.redirectTo({
+                url: '/pages/myBookings',
+              })
               } else if (res.cancel) {
               }
             }

@@ -59,7 +59,10 @@
       }
     }
     async getBookingList() {
-      let bookingList = await this.$parent.getMeetingList("oTAhG4xueaQPYtcbS875YSSM6DOQ");
+      var userInfoRes = await wepy.getStorage({
+        key: 'userInfo'
+      })
+      let bookingList = await this.$parent.getMeetingList(userInfoRes.data.openId);
       for (let i = 0; i < bookingList.length; i++) {
         if (new Date((bookingList[i].date + ' ' + bookingList[i].startTime).replace(/\s+/g, 'T').concat('.000+08:00')).getTime() > new Date().getTime()) {
           bookingList[i].isBefore = true

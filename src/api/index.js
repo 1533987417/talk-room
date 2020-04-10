@@ -71,6 +71,10 @@ const meetingList = params => wxRequest(baseUrl + '/getMeeting', {
   data: params,
   method: 'POST'
 })
+const setUser = params => wxRequest(baseUrl + '/setUser', {
+  data: params,
+  method: 'POST'
+})
 const cancelBook = params => wxRequest(baseUrl + '/bookings/' + params.id, {
   method: 'DELETE'
 })
@@ -96,6 +100,10 @@ const booking = params => wxRequest(baseUrl + '/bookings', {
 })
 
 const feedback = params => wxRequest(baseUrl + '/feedback', {
+  data: params,
+  method: 'POST'
+})
+const getUsers = params => wxRequest(baseUrl + '/getUsers', {
   data: params,
   method: 'POST'
 })
@@ -128,5 +136,7 @@ export default {
   getUserInfo,
   getSuperUsers,
   meetingList,
-  cancelMeeting
+  cancelMeeting,
+  setUser,
+  getUsers
 }
