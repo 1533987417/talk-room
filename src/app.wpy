@@ -20,6 +20,7 @@ export default class extends wepy.app {
     'pages/me',
     'pages/booking',
     'pages/detailBooking',
+    'pages/bookingLate',
     'pages/myBookings',
     'pages/bind',
     'pages/feedback',
@@ -93,6 +94,14 @@ export default class extends wepy.app {
     } else {
       return await this.login()
     }
+  }
+
+  async cancelMeeting(id, times) {
+     await api.cancelMeeting({
+      "meeting_room_id":id,
+      "times":times,
+      "openId": "oTAhG4xueaQPYtcbS875YSSM6DOQ"
+    })
   }
 
   async getBookingList(offset, limit) {

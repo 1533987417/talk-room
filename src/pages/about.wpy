@@ -17,7 +17,7 @@ import wepy from 'wepy'
 
 export default class About extends wepy.page {
   config = {
-    navigationBarTitleText: '关于',
+    navigationBarTitleText: '用户列表',
     enablePullDownRefresh: false
   }
 

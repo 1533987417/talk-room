@@ -82,6 +82,7 @@
         <view class="flex-wrp"><view class="flex-item">会议日期</view><view class="flex-detail"><input type="text" disabled="{{1===1}}" name="date" value="{{bookingDetail.date}}"></view></view>
         <view class="flex-wrp"><view class="flex-item">开始时间</view><view class="flex-detail"><input type="text" disabled="{{1===1}}" name="start_time" value="{{bookingDetail.start_time}}"></view></view>
         <view class="flex-wrp"><view class="flex-item">结束时间</view><view class="flex-detail"><input type="text" disabled="{{1===1}}" name="end_time" value="{{bookingDetail.end_time}}"></view></view>
+        <view class="flex-wrp" wx:if ="{{bookingDetail.nickName}}"><view class="flex-item">会议主办</view><view class="flex-detail"><input type="text" disabled="{{1===1}}" name="end_time" value="{{bookingDetail.nickName}}"></view></view>
         <view class="flex-wrp"><view class="flex-item">会议人数</view>
           <view class="flex-detail">
             <picker style="{height: 32px;}" bindchange="bindPickerChange" value="{{index}}" name="attendance_count" range="{{array}}">
@@ -91,8 +92,7 @@
             </picker>
           </view>
         </view>
-        <view class="flex-wrp btn-container" wx:if="{{!!bookingDetail.id && bookingDetail.current}}"><button class="btn" type="primary" @tap="cancelBooking({{bookingDetail.id}})">取消预订</button></view>
-        <view class="flex-wrp btn-container" wx:if="{{!bookingDetail.id}}"><button class="btn" formType="submit" type="primary">取消预订</button></view>
+        <view class="flex-wrp btn-container" wx:if="{{!!bookingDetail.id && bookingDetail.current}}"><button class="btn" type="primary" @tap="cancelBooking({{bookingDetail}})">取消预订</button></view>
       </view>
     </form>
   </scroll-view>
@@ -122,19 +122,20 @@
     watch = {
     }
     data = {
-      array: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-      index: 4
+      // array: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      // index: 4
     }
 
     methods = {
-      cancelBooking(id) {
+      cancelBooking(param) {debugger
         const that = this
         wx.showModal({
           title: '提示',
           content: '您确定要取消这个预订吗？',
           success: function(res) {
+            debugger
             if (res.confirm) {
-              that.$parent.cancelBooking(id)
+              that.$parent.$parent.cancelMeeting(id,timeIds)
             } else if (res.cancel) {
             }
           }

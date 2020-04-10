@@ -135,12 +135,11 @@
     <view class="section">
       <view class="flex-wrp" style="flex-direction:row;" wx:for="{{bookingList}}" wx:key="id" wx:for-item="booking">
         <view class="flex-item">
-          <view class="meeting-name">{{booking.meeting_room.name}} </view>
+          <view class="meeting-name">{{booking.subject}} </view>
           <view class="meeting-date"><view>{{booking.date}}</view><view>{{booking.startTime + '-' + booking.endTime}}</view></view>
         </view>
         <view class="flex-opt">
-          <view class="flex-set" @tap="reviewBooking({{booking.id}})">详情</view>
-          <view class="flex-set gray" wx:if"{{booking.isBefore}}" @tap="cancelBooking({{booking.id}})" >取消</view>
+          <view class="flex-set" @tap="reviewBooking({{booking.subject}},{{booking.id}},{{booking.date}},{{booking.startTime}},{{booking.endTime}},{{booking.timeIds}},{{booking.nickName}})">详情</view>
         </view>
       </view>
       <view class="defaultText" wx:if"{{bookingList.length === 0}}">您还没有预订会议室</view>
@@ -166,21 +165,8 @@
     watch = {
     }
     methods = {
-      cancelBooking(id) {
-        const that = this
-        wx.showModal({
-          title: '提示',
-          content: '您确定要取消这个预订吗？',
-          success: function(res) {
-            if (res.confirm) {
-              that.$parent.cancelBooking(id)
-            } else if (res.cancel) {
-            }
-          }
-        })
-      },
-      reviewBooking(id) {
-        this.$root.$navigate({url: 'detailBooking?id=' + id})
+      reviewBooking(subject,id,date,start,end,timeIds,nickName) {
+        this.$root.$navigate({url: 'bookingLate?subject=' + subject+'&id='+id+'&date='+date+'&start='+start+'&end='+end+'&timeIds='+timeIds+'&nickName='+nickName})
       }
     }
   }

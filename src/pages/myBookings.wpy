@@ -65,17 +65,15 @@
           bookingList[i].isBefore = true
         } else {
           bookingList[i].isBefore = false
-        }
+        };
         bookingList[i].startTime = bookingList[i].startTime.substr(0, 5)
-        bookingList[i].endTime = bookingList[i].endTime.substr(0, 5)
+        bookingList[i].endTime = bookingList[i].endTime.substr(0, 5);
         this.bookingList.push(bookingList[i])
       }
-      this.offset += 1
       this.$apply()
     }
     async onShow() {
       this.allData = false
-      this.offset = 0
       this.bookingList = []
       this.getBookingList()
     }

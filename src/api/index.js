@@ -81,6 +81,10 @@ const addBook = params => wxRequest(baseUrl + '/saveMeeting', {
   data: params,
   method: 'POST'
 })
+const cancelMeeting = params => wxRequest(baseUrl + '/cancelMeeting', {
+  data: params,
+  method: 'POST'
+})
 
 const getLocations = () => wxRequest(baseUrl + '/locations', {
   method: 'GET'
@@ -123,5 +127,6 @@ export default {
   getSchedules,
   getUserInfo,
   getSuperUsers,
-  meetingList
+  meetingList,
+  cancelMeeting
 }
