@@ -43,8 +43,6 @@
 
     data = {
       bookingList: [],
-      offset: 0,
-      limmit: 20,
       allData: false
     }
 
@@ -61,18 +59,15 @@
       }
     }
     async getBookingList() {
-      let bookingList = await this.$parent.getBookingList(this.offset * this.limmit, this.limmit)
-      if (bookingList.length === 0 || bookingList.length < this.limmit) {
-        this.allData = true
-      }
+      let bookingList = await this.$parent.getMeetingList("oTAhG4xueaQPYtcbS875YSSM6DOQ");
       for (let i = 0; i < bookingList.length; i++) {
-        if (new Date((bookingList[i].date + ' ' + bookingList[i].start_time).replace(/\s+/g, 'T').concat('.000+08:00')).getTime() > new Date().getTime()) {
+        if (new Date((bookingList[i].date + ' ' + bookingList[i].startTime).replace(/\s+/g, 'T').concat('.000+08:00')).getTime() > new Date().getTime()) {
           bookingList[i].isBefore = true
         } else {
           bookingList[i].isBefore = false
         }
-        bookingList[i].start_time = bookingList[i].start_time.substr(0, 5)
-        bookingList[i].end_time = bookingList[i].end_time.substr(0, 5)
+        bookingList[i].startTime = bookingList[i].startTime.substr(0, 5)
+        bookingList[i].endTime = bookingList[i].endTime.substr(0, 5)
         this.bookingList.push(bookingList[i])
       }
       this.offset += 1

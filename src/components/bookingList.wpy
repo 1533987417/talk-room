@@ -136,7 +136,7 @@
       <view class="flex-wrp" style="flex-direction:row;" wx:for="{{bookingList}}" wx:key="id" wx:for-item="booking">
         <view class="flex-item">
           <view class="meeting-name">{{booking.meeting_room.name}} </view>
-          <view class="meeting-date"><view>{{booking.date}}</view><view>{{booking.start_time + '-' + booking.end_time}}</view></view>
+          <view class="meeting-date"><view>{{booking.date}}</view><view>{{booking.startTime + '-' + booking.endTime}}</view></view>
         </view>
         <view class="flex-opt">
           <view class="flex-set" @tap="reviewBooking({{booking.id}})">详情</view>
