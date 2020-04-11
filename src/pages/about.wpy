@@ -1,50 +1,49 @@
 <style lang="less">
-    .btn {
-    display: inline-block;
-    width: 30%;
-    height: 70rpx;
-    font-size: 25rpx;
-    line-height: 70rpx;
-    margin-right: 1vw;
-    background-color: #f4f4f5;
-    color: #909399;
-  }
-  .leftMsg {
-    font-size: 35rpx;
-    color: #444;
-    line-height: 7vw;
-    padding: 2vw 2.5vw;
-    background-color: #fff;
-    margin-left: -1.6vw;
-    border-radius: 10rpx;
-    z-index: 10;
-  }
-  .inputRoom {
-    width:100vw;
-    height: 16vw;
-    border-top: 1px solid #cdcdcd;
-    background-color: #f1f1f1;
-    position: fixed;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-    z-index: 20;
-  }
+.btn {
+  display: inline-block;
+  width: 30%;
+  height: 70rpx;
+  font-size: 25rpx;
+  line-height: 70rpx;
+  margin-right: 1vw;
+  background-color: #f4f4f5;
+  color: #909399;
+}
+.leftMsg {
+  font-size: 35rpx;
+  color: #444;
+  line-height: 7vw;
+  padding: 2vw 2.5vw;
+  background-color: #fff;
+  margin-left: -1.6vw;
+  border-radius: 10rpx;
+  z-index: 10;
+}
+.inputRoom {
+  width:100vw;
+  height: 16vw;
+  border-top: 1px solid #cdcdcd;
+  background-color: #f1f1f1;
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  z-index: 20;
+}
 
-  input {
-    width: 76vw;
-    height: 9.33vw;
-    background-color: #fff;
-    border-radius: 40rpx;
-    margin-left: 2vw;
-    padding: 0 3vw;
-    font-size: 28rpx;
-    color: #444;
-  }
+input {
+  width: 76vw;
+  height: 9.33vw;
+  background-color: #fff;
+  border-radius: 40rpx;
+  margin-left: 2vw;
+  padding: 0 3vw;
+  font-size: 28rpx;
+  color: #444;
+}
 </style>
 
 <template>
-  {{userList}}
   <scroll-view scroll-y style='height:100vh;padding-top: 3vw' >
     <block wx:for="{{userList}}" wx:for-index="index" wx:for-item="user" wx:if ="{{check}}">
       <view id='msg-{{index}}'  style='display: flex; padding: 2vw 11vw 2vw 2vw;'>
@@ -52,10 +51,7 @@
           <image style='width: 11vw; height: 11vw; border-radius: 10rpx;' src="{{user.avatar}}"></image>
         </view>
         <view class='leftMsg'>{{user.nickname}}</view>
-        <button wx:if ="{{user.levelId == 0}}" class="btn" formType="submit" @tap="setUp()">设置为管理员</button>
-        <view wx:if ="{{user.levelId == 1}}" style="font-size: 25rpx;padding-top: 10px;margin-right: 1vw;">
-          管理员
-        </view>
+        <button  class="btn" formType="submit" @tap="setUp({{user.openId}},{{user.type}})">{{user.type == 0? '设置为管理员' : '取消管理员'}}</button>
       </view>
     </block>
     <block class='container' wx:if ="{{!check}}">
@@ -83,7 +79,8 @@ export default class About extends wepy.page {
     var userInfoRes = await wepy.getStorage({
       key: 'userInfo'
     })
-    if(userInfoRes.data.type){
+    console.log(userInfoRes.data)
+    if(userInfoRes.data.type==1){
       this.check=true;
     };
     console.log('初始化');
@@ -91,14 +88,22 @@ export default class About extends wepy.page {
     this.$apply();
   }
   methods={
-    setUp() {
+    async  setUp(openId,type) {
       const that = this
       wx.showModal({
         title: '提示',
         content: '您确定要将此人设置为管理员吗？',
-        success: function(res) {
+        success: async function(res) {
           if (res.confirm) {
-            that.$parent.setUser();
+            if(type==0){
+              type=1
+            }else{
+              type=0
+            }
+            that.$parent.setUser(openId,type);
+            that.userList =await that.$parent.getUsers();
+            console.log(that.userList)
+            that.$apply();
           } else if (res.cancel) {
           }
         }

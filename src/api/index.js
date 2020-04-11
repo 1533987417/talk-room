@@ -1,9 +1,9 @@
 import wepy from 'wepy'
 import storage from '../utils/storage'
 
-const baseUrl = 'https://leshijie.online:6379/'
+//const baseUrl = 'https://leshijie.online:6379/'
 //const baseUrl = 'https://booking.ffan.com/api'
-// const baseUrl = 'http://localhost:8081/'
+const baseUrl = 'http://localhost:8081/'
 
 const wxRequest = async (url, params = {}, notice = '加载中...') => {
   if (wepy.hideToast) {
@@ -71,7 +71,7 @@ const meetingList = params => wxRequest(baseUrl + '/getMeeting', {
   data: params,
   method: 'POST'
 })
-const setUser = params => wxRequest(baseUrl + '/setUser', {
+const setUser = params => wxRequest(baseUrl + '/setUsers', {
   data: params,
   method: 'POST'
 })

@@ -201,7 +201,7 @@ page {
           </view>
         </view>
       </view>
-      <view  wx:if ="{{check}}" class="booking-btn" @tap="booking">确认选择</view>
+      <view  wx:if ="{{currentUser.type==1}}" class="booking-btn" @tap="booking">确认选择</view>
     </view>
 
     <!-- 预订预览浮层 -->
@@ -281,20 +281,20 @@ export default class Booking extends wepy.page {
     previewHidden: true,
     currentUser: {} , // 当前登录的用户
     check:false
-}
+  }
 
-methods = {
-  selectTime(meetingRoom, bookings) {
-    console.log("meetingRoom"+meetingRoom)
-    console.log("bookings"+bookings)
-    this.meetingRoom = meetingRoom
-    this.bookings = bookings
-    this.$apply()
-  },
+  methods = {
+    selectTime(meetingRoom, bookings) {
+      console.log("meetingRoom"+meetingRoom)
+      console.log("bookings"+bookings)
+      this.meetingRoom = meetingRoom
+      this.bookings = bookings
+      this.$apply()
+    },
 
-  async clickTime(time, meetingRoom) {
-    if (time && time.booking_id) {
-      this.previewHidden = false
+    async clickTime(time, meetingRoom) {
+      if (time && time.booking_id) {
+        this.previewHidden = false
 // let booking = null
 meetingRoom.bookings.forEach(item => {
   if (item.id === time.booking_id) {

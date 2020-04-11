@@ -61,7 +61,7 @@
 
     <view class="me-item-wrap">
       <view class="me-item" @tap="navigateTo('feedback')">
-        <text>意见反馈</text>
+        <text>聊天室</text>
         <text class="gray">></text>
       </view>
     </view>

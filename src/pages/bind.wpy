@@ -130,7 +130,7 @@ import Popup from '../components/popup'
 
 export default class Index extends wepy.page {
   config = {
-    navigationBarTitleText: '绑定万信号',
+    navigationBarTitleText: '登录',
     enablePullDownRefresh: false
   }
   components = {

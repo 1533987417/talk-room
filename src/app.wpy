@@ -69,8 +69,7 @@ export default class extends wepy.app {
   }
 
   async onLaunch() {
-    this.globalData.token = await storage.get('token', '')
-    this.globalData.userInfo = await storage.get('userInfo', null)
+    this.clear()
   }
 
   async clear() {
@@ -97,42 +96,43 @@ export default class extends wepy.app {
   }
 
   async cancelMeeting(id, times) {
-     await api.cancelMeeting({
-      "meeting_room_id":id,
-      "times":times,
-      "openId": this.globalData.userInfo.openId
-    })
-  }
-  async setUser() {
-     await api.setUser({
-      "openId": this.globalData.userInfo.openId
-    })
-  }
-  async getUsers() {
-    const res = await api.getUsers({
-      "openId":  this.globalData.userInfo.openId
-    })
-    return res.data
-  }
+   await api.cancelMeeting({
+    "meeting_room_id":id,
+    "times":times,
+    "openId": this.globalData.userInfo.openId
+  })
+ }
+ async setUser(openId,type) {
+   await api.setUser({
+    "openId": openId,
+    "type":type
+  })
+ }
+ async getUsers() {
+  const res = await api.getUsers({
+    "openId":  this.globalData.userInfo.openId
+  })
+  return res.data
+}
 
-  async getBookingList(offset, limit) {
-    const res = await api.bookingList({
-      offset: offset,
-      limit: limit
-    })
-    return res.data
-  }
-  async getMeetingList(openId) {
-    const res = await api.meetingList({
-      openId: openId,
-    })
-    return res.data
-  }
-  async login() {
-    wepy.showToast({
-      title: '登录中...',
-      icon: 'loading'
-    })
+async getBookingList(offset, limit) {
+  const res = await api.bookingList({
+    offset: offset,
+    limit: limit
+  })
+  return res.data
+}
+async getMeetingList(openId) {
+  const res = await api.meetingList({
+    openId: openId,
+  })
+  return res.data
+}
+async login() {
+  wepy.showToast({
+    title: '登录中...',
+    icon: 'loading'
+  })
 
     // 必须先 login 获取 code 再 getUserInfo 顺序不能乱
     const code = await this.code()
