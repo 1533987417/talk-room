@@ -53,7 +53,7 @@
         </view>
         <view class='leftMsg'>{{user.nickname}}</view>
         <button wx:if ="{{user.levelId == 0}}" class="btn" formType="submit" @tap="setUp()">设置为管理员</button>
-        <view wx:if ="{{user.levelId == 1}}" style="font-size: 25rpx;padding-top: 10px;margin-right: 1vw;">
+        <view wx:if ="{{user.levelId == 1}}" style="font-size: 25rpx;padding-top: 10px;position:absolute;right:10px;">
           管理员
         </view>
       </view>
