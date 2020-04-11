@@ -140,9 +140,9 @@
           success: function(res) {
             if (res.confirm) {
               that.$parent.$parent.cancelMeeting(param.id,param.timeIds)
-              wx.redirectTo({
-                url: '/pages/myBookings',
-                })
+              wx.navigateBack({
+                delta: 1
+              })
               } else if (res.cancel) {
               }
             }
