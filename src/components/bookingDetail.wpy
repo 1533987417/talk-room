@@ -66,7 +66,13 @@
   display: none;
 }
 .content {
-  height: 42px;
+  height: 68px;
+  font-size:12px;
+  background-color: #FFFFFF;
+  border-bottom: 2px solid #f7f8fa;
+}
+.content1 {
+  height: 50px;
   font-size:12px;
   background-color: #FFFFFF;
   border-bottom: 2px solid #f7f8fa;
@@ -92,16 +98,16 @@
         <view class="flex-wrp"><view class="flex-item">结束时间</view><view class="flex-detail"><input type="text" disabled="{{1===1}}" name="end_time" value="{{bookingDetail.end_time}}"></view></view>
         <view class="flex-wrp" wx:if ="{{bookingDetail.nickName}}"><view class="flex-item">会议主办</view><view class="flex-detail"><input type="text" disabled="{{1===1}}" name="end_time" value="{{bookingDetail.nickName}}"></view></view>
         <view class="flex-wrp"><view class="flex-item">会议人数</view><view class="flex-detail"><input type="text" disabled="{{1===1}}" name="num" value="6"></view></view>
-        <view class="content">
+        <view class="content1">
           <view class="title" style="margin-left: 15px;">这里是会议内容及说明</view>
           <input style="margin-left: 15px;" placeholder="请输入会议内容" value="{{bookingDetail.text}}" name="text"  disabled="{{!!bookingDetail.id}}" auto-focus placeholder-style="color:#ccc;" />
         </view>
 <!--        <view class="content">-->
 <!--          <view class="title" style="margin-left: 15px;">这里是会议内容及说明</view>-->
-<!--          <textarea style="margin-left: 15px;" placeholder="请输入会议内容（100字以内）" value="{{bookingDetail.text}}" maxlength="100" name="text" disabled="{{!!bookingDetail.id}}"  auto-focus placeholder-style="color:#ccc;" />-->
+<!--          <textarea bindconfirm="confirm" style="margin-left: 15px;" placeholder="请输入会议内容（100字以内）" value="{{bookingDetail.text}}" maxlength="100" name="myname" disabled="{{!!bookingDetail.id}}"  auto-focus placeholder-style="color:#ccc;" />-->
 <!--        </view>-->
-      <view class="flex-wrp btn-container" style="padding-top: 40px" wx:if="{{!!bookingDetail.id && bookingDetail.current && bookingDetail.meeting!=1}}"><button class="btn" type="primary" @tap="cancelBooking({{bookingDetail}})">取消预订</button></view>
-      <view class="flex-wrp btn-container" style="padding-top: 40px" wx:if="{{!bookingDetail.id}}"><button class="btn" formType="submit" type="primary">确认预订</button></view>
+      <view class="flex-wrp btn-container" style="padding-top: 25px" wx:if="{{!!bookingDetail.id && bookingDetail.current && bookingDetail.meeting!=1}}"><button class="btn" type="primary" @tap="cancelBooking({{bookingDetail}})">取消预订</button></view>
+      <view class="flex-wrp btn-container" style="padding-top: 25px" wx:if="{{!bookingDetail.id}}"><button class="btn" formType="submit" type="primary">确认预订</button></view>
      </view>
     </form>
       </scroll-view>
