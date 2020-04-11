@@ -1,9 +1,11 @@
 import wepy from 'wepy'
 import storage from '../utils/storage'
 
-//const baseUrl = 'https://leshijie.online:6379/'
+// const baseUrl = 'https://leshijie.online:6379/'
 //const baseUrl = 'https://booking.ffan.com/api'
-const baseUrl = 'http://localhost:8081/'
+// const baseUrl = 'http://localhost:8081/'
+// const baseUrl = 'http://121.40.140.66:6379/'
+const baseUrl = 'https://leshijie.online:6379/'
 
 const wxRequest = async (url, params = {}, notice = '加载中...') => {
   if (wepy.hideToast) {
@@ -103,6 +105,10 @@ const feedback = params => wxRequest(baseUrl + '/feedback', {
   data: params,
   method: 'POST'
 })
+const getMeetingContent = params => wxRequest(baseUrl + '/getMeetingContent', {
+  data: params,
+  method: 'GET'
+})
 const getUsers = params => wxRequest(baseUrl + '/getUsers', {
   data: params,
   method: 'POST'
@@ -138,5 +144,6 @@ export default {
   meetingList,
   cancelMeeting,
   setUser,
-  getUsers
+  getUsers,
+  getMeetingContent
 }

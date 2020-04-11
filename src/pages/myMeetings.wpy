@@ -33,9 +33,9 @@ import wepy from 'wepy'
 import api from '../api'
 import bookingList from '../components/bookingList'
 
-export default class Index extends wepy.page {
+export default class myMeetings extends wepy.page {
   config = {
-    navigationBarTitleText: '我的预订'
+    navigationBarTitleText: '会议查询'
   }
   components = {
     bookingList: bookingList
@@ -58,20 +58,12 @@ export default class Index extends wepy.page {
       console.log(`${this.$name} receive ${$event.name} from ${$event.source.$name}`)
     }
   }
-  async getBookingList() {
-    var userInfoRes = await wepy.getStorage({
-      key: 'userInfo'
-    })
-    let bookingList = await this.$parent.getMeetingList(userInfoRes.data.openId);
+  async getMeetingContent() {
+    var bookingList = await this.$parent.getMeetingContent();
     for (let i = 0; i < bookingList.length; i++) {
-      if (new Date((bookingList[i].date + ' ' + bookingList[i].startTime).replace(/\s+/g, 'T').concat('.000+08:00')).getTime() > new Date().getTime()) {
-        bookingList[i].isBefore = true
-      } else {
-        bookingList[i].isBefore = false
-      };
       bookingList[i].startTime = bookingList[i].startTime.substr(0, 5)
-      bookingList[i].endTime = bookingList[i].endTime.substr(0, 5);
-      bookingList[i].meeting = false;
+      bookingList[i].endTime = bookingList[i].endTime.substr(0, 5)
+      bookingList[i].meeting = '1'
       this.bookingList.push(bookingList[i])
     }
     this.$apply()
@@ -79,35 +71,12 @@ export default class Index extends wepy.page {
   async onShow() {
     this.allData = false
     this.bookingList = []
-    this.getBookingList()
+    this.getMeetingContent()
   }
   async onReachBottom() {
     if (!this.allData) {
-      this.getBookingList()
+      this.getMeetingContent()
     }
   }
-  async cancelBooking(id) {
-    const res = await api.cancelBook({
-      id: id
-    })
-
-    if (res.code === '200') {
-      this.bookingList.splice(this.bookingList.findIndex(function(value) { return value.id === id }), 1)
-      wx.showToast({
-        title: '成功',
-        icon: 'success',
-        duration: 1000
-      })
-      this.$apply()
-    } else {
-      wx.showModal({
-        title: '错误',
-        content: res.message,
-        showCancel: false,
-        success: function(res) {
-        }
-      })
-    }
-  };
 }
 </script>

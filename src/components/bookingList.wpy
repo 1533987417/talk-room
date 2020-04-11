@@ -139,7 +139,7 @@
           <view class="meeting-date"><view>{{booking.date}}</view><view>{{booking.startTime + '-' + booking.endTime}}</view></view>
         </view>
         <view class="flex-opt">
-          <view class="flex-set" @tap="reviewBooking({{booking.subject}},{{booking.id}},{{booking.date}},{{booking.startTime}},{{booking.endTime}},{{booking.timeIds}},{{booking.nickName}})">详情</view>
+          <view class="flex-set" @tap="reviewBooking({{booking.subject}},{{booking.id}},{{booking.date}},{{booking.startTime}},{{booking.endTime}},{{booking.timeIds}},{{booking.nickName}},{{booking.text}},{{booking.meeting }})">详情</view>
         </view>
       </view>
       <view class="defaultText" wx:if"{{bookingList.length === 0}}">您还没有预订会议室</view>
@@ -165,8 +165,9 @@
     watch = {
     }
     methods = {
-      reviewBooking(subject,id,date,start,end,timeIds,nickName) {
-        this.$root.$navigate({url: 'bookingLate?subject=' + subject+'&id='+id+'&date='+date+'&start='+start+'&end='+end+'&timeIds='+timeIds+'&nickName='+nickName})
+      reviewBooking(subject,id,date,start,end,timeIds,nickName,text,meeting) {
+        console.log("meeting",meeting)
+        this.$root.$navigate({url: 'bookingLate?subject=' + subject+'&id='+id+'&date='+date+'&start='+start+'&end='+end+'&timeIds='+timeIds+'&nickName='+nickName +'&text='+text +'&meeting='+meeting})
       }
     }
   }

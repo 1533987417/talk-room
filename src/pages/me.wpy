@@ -67,6 +67,13 @@
     </view>
 
     <view class="me-item-wrap">
+      <view class="me-item" @tap="navigateTo('myMeetings')">
+        <text>会议查询</text>
+        <text class="gray">></text>
+      </view>
+    </view>
+
+    <view class="me-item-wrap">
       <view class="me-item" @tap="navigateTo('about')">
         <text>用户列表</text>
         <text class="gray">></text>

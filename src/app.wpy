@@ -22,6 +22,7 @@ export default class extends wepy.app {
     'pages/detailBooking',
     'pages/bookingLate',
     'pages/myBookings',
+    'pages/myMeetings',
     'pages/bind',
     'pages/feedback',
     'pages/about',
@@ -112,6 +113,10 @@ export default class extends wepy.app {
   const res = await api.getUsers({
     "openId":  this.globalData.userInfo.openId
   })
+  return res.data
+}
+async getMeetingContent() {
+  const res = await api.getMeetingContent()
   return res.data
 }
 

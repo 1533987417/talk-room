@@ -55,6 +55,7 @@ export default class DetailBooking extends wepy.page {
   }
 
   async onLoad(e) {
+    console.log(e)
     const val = await storage.get('userInfo')
     if(e.id){
       this.bookingDetail.id = e.id;
@@ -70,8 +71,21 @@ export default class DetailBooking extends wepy.page {
     if(e.timeIds){
       this.bookingDetail.timeIds = e.timeIds;
     }
+    if(e.text){
+      this.bookingDetail.text = e.text;
+    }
     if(e.nickName){
       this.bookingDetail.nickName = e.nickName;
+    }
+    if(e.meeting){
+      this.bookingDetail.meeting = e.meeting;
+    }else{
+      this.bookingDetail.meeting = "0";
+    }
+    if(this.bookingDetail.meeting == 1 ){
+      wx.setNavigationBarTitle({
+        title: '会议查询'
+      })
     }
     console.log(this.bookingDetail)
     this.bookingDetail.current=true;
