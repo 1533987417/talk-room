@@ -66,6 +66,7 @@ export default class myMeetings extends wepy.page {
       bookingList[i].meeting = '1'
       this.bookingList.push(bookingList[i])
     }
+    this.bookingList = bookingList;
     this.$apply()
   }
   async onShow() {
