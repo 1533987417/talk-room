@@ -89,7 +89,9 @@ export default class Home extends wepy.page {
     },
 
     search() {
-      if (this.date === '') {
+      wepy.requestSubscribeMessage({tmplIds:['2IXDTNKoS1dIYY1r9oSsmOtkl58znhKMpNd3ndAx2lk']}).then(d=>{
+       console.log(d)
+       if (this.date === '') {
         this.$invoke('popup', 'show', '请选择日期')
         return
       }
@@ -106,25 +108,27 @@ export default class Home extends wepy.page {
         wepy.navigateTo({
           url: `booking?date=${this.date}&location_id=${this.location.id}&location_name=${this.location.name}`
         })
-      }
+      }); 
+
+    }
+  }
+
+  async onShow() {
+    console.debug('home onShow')
+
+    const user = await this.$parent.checkLogin()
+    console.log("user"+user)
+    if (user==null) {
+      console.log('准备跳转到 bind')
+      wepy.redirectTo({
+        url: 'bind'
+      })
     }
 
-    async onShow() {
-      console.debug('home onShow')
-
-      const user = await this.$parent.checkLogin()
-      console.log("user"+user)
-      if (user==null) {
-        console.log('准备跳转到 bind')
-        wepy.redirectTo({
-          url: 'bind'
-        })
-      }
-
-      this.$broadcast('check-super-user', user)
-      this.$broadcast('load-locations')
-      this.$apply()
-    }
+    this.$broadcast('check-super-user', user)
+    this.$broadcast('load-locations')
+    this.$apply()
+  }
 
     // 分享
     onShareAppMessage() {

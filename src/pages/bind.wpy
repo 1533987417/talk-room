@@ -144,11 +144,14 @@ export default class Index extends wepy.page {
 
   methods = {
     async getUserInfo(){
+      
       const user = await this.$parent.checkLogin();
       console.log("usersss"+user)
       wepy.switchTab({
         url: 'home'
       })
+    },
+    getUser(){
     }
   }
 
